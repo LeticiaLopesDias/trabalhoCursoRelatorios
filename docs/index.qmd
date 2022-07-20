@@ -1,0 +1,26 @@
+---
+title: "Desmatamento em Áreas Protegidas da Amazônia"
+author: "Letícia Lopes"
+date: "`r Sys.Date()`"
+format:
+  html:
+    theme: journal
+css: custom.css
+---
+
+```{r}
+
+
+```
+
+<em class='nota'>
+*A 1ª versão desse relatório foi feita como trabalho final do curso "R para Ciência de Dados 1", da <a href="https://curso-r.com/" target="_blank">Curso-R</a>, em outubro de 2021 e está disponível para acesso <a href="https://leticialopesdias.github.io/relatorio/docs/" target="_blank">nesse link</a>. Essa versão consiste no trabalho final do curso "Relatórios Automáticos", também da Curso-R.*
+</em>
+
+## Contexto
+
+O desmatamento da floresta amazônica se destaca nas discussões sobre mudanças climáticas uma vez que é responsável por quase metade das emissões de gases de efeito estufa pelo Brasil ^[Saiba mais sobre as emissões de gases de efeito estufa no Brasil em \<https://seeg.eco.br>.].
+
+As áreas protegidas formam uma barreira contra esse desmatamento, sendo que diversos projetos de conservação visam apoiar essas áreas no cumprimento de seus objetivos. O Projeto <a href="https://lira.ipe.org.br/" target="_blank">**LIRA - Legado Integrado da Região Amazônica**</a> se soma às iniciativas existentes e abrange 43 unidades de conservação e 43 terras indígenas da Amazônia brasileira.
+
+Para analisar o desmatamento na Amazônia e nas áreas apoiadas pelo LIRA, foram utilizados dados gerados pelo **INPE - Instituto Nacional de Pesquisas Espaciais** e disponibilizados no portal <a href="http://terrabrasilis.dpi.inpe.br/" target="_blank">TerraBrasilis</a>.
