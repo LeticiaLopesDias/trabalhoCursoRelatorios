@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Letícia Lopes">
-<meta name="dcterms.date" content="2022-07-14">
+<meta name="dcterms.date" content="2022-07-21">
 
-<title>Desmatamento em Áreas Protegidas da Amazônia</title>
+<title>Desmatamento em Unidades de Conservação da Amazônia</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -35,15 +35,26 @@ ul.task-list{list-style: none;}
 <link rel="stylesheet" href="custom.css">
 </head>
 
-<body class="fullcontent">
+<body>
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Conteúdo</h2>
+   
+  <ul>
+  <li><a href="#contexto" id="toc-contexto" class="nav-link active" data-scroll-target="#contexto">Contexto</a></li>
+  <li><a href="#resultados" id="toc-resultados" class="nav-link" data-scroll-target="#resultados">Resultados</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Desmatamento em Áreas Protegidas da Amazônia</h1>
+<h1 class="title">Desmatamento em Unidades de Conservação da Amazônia</h1>
 </div>
 
 
@@ -60,7 +71,7 @@ ul.task-list{list-style: none;}
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 14, 2022</p>
+      <p class="date">July 21, 2022</p>
     </div>
   </div>
     
@@ -72,21 +83,49 @@ ul.task-list{list-style: none;}
 <div class="cell">
 
 </div>
-<p><em class="nota"> <em>A 1ª versão desse relatório foi feita como trabalho final do curso “R para Ciência de Dados 1”, da <a href="https://curso-r.com/" target="_blank">Curso-R</a>, em outubro de 2021 e está disponível para acesso <a href="https://leticialopesdias.github.io/relatorio/docs/" target="_blank">nesse link</a>. Essa versão consiste no trabalho final do curso “Relatórios Automáticos”, também da Curso-R.</em> </em></p>
+<p><em class="nota"> <em>A 1ª versão desse relatório foi feita como trabalho final do curso “R para Ciência de Dados 1”, da</em> <a href="https://curso-r.com/" target="_blank">Curso-R</a>, em outubro de 2021 e está disponível para acesso <a href="https://leticialopesdias.github.io/relatorio-r4ds1/docs/" target="_blank">nesse link</a>. Essa versão consiste no trabalho final do curso “Relatórios Automáticos”, também da Curso-R. </em></p>
 <section id="contexto" class="level2">
 <h2 class="anchored" data-anchor-id="contexto">Contexto</h2>
-<p>O desmatamento da floresta amazônica se destaca nas discussões sobre mudanças climáticas uma vez que é responsável por quase metade das emissões de gases de efeito estufa pelo Brasil <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
-<p>As áreas protegidas formam uma barreira contra esse desmatamento, sendo que diversos projetos de conservação visam apoiar essas áreas no cumprimento de seus objetivos. O Projeto <a href="https://lira.ipe.org.br/" target="_blank"><strong>LIRA - Legado Integrado da Região Amazônica</strong></a> se soma às iniciativas existentes e abrange 43 unidades de conservação e 43 terras indígenas da Amazônia brasileira.</p>
-<p>Para analisar o desmatamento na Amazônia e nas áreas apoiadas pelo LIRA, foram utilizados dados gerados pelo <strong>INPE - Instituto Nacional de Pesquisas Espaciais</strong> e disponibilizados no portal <a href="http://terrabrasilis.dpi.inpe.br/" target="_blank">TerraBrasilis</a>.</p>
+<p>As áreas protegidas possuem um papel amplamente reconhecido na conservação da biodiversidade. No bioma amazônico, são encontradas principalmente duas estratégias de proteção: as unidades de conservação e as terras indígenas. As primeiras serão o objeto dessa análise, cujo objetivo é avaliar o comportamento do desmatamento nessas áreas de 2008 a 2021.</p>
+<p>Para isso, foram utilizados dados gerados pelo INPE - Instituto Nacional de Pesquisas Espaciais e disponibilizados no portal <a href="http://terrabrasilis.dpi.inpe.br/" target="_blank">TerraBrasilis</a>, junto aos dados do <a href="http://dados.mma.gov.br/dataset/44b6dc8a-dc82-4a84-8d95-1b0da7c85dac/resource/fed217ff-fe75-4744-9663-0a06157d9c3b/download/cnuc_2022_01sem.csv" target="_blank">Cadastro Nacional de Unidades de Conservação</a>.</p>
+</section>
+<section id="resultados" class="level2">
+<h2 class="anchored" data-anchor-id="resultados">Resultados</h2>
+<div class="cell">
+
+</div>
+<p>Assim como ocorreu para o bioma como um todo, o desmatamento nas unidades de conservação (UCs) aumentou nos últimos anos, como visto na figura abaixo. Em 2021 foi registrado o maior valor dos últimos 13 anos: <strong>1.168,21 km²</strong>, o que representa um aumento de <strong>22%</strong> em relação ao ano anterior, que já havia sido um recorde histórico.</p>
+<p>Além disso, o estado do Pará segue como o principal foco do desmatamento, com suas unidades sendo as mais afetadas pela perda de floresta ao longo de todo o período de análise e sofrendo com o aumento acentuado nos últimos 4 anos.</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Todas as unidades</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Por estado</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/plot1-1.png" class="img-fluid figure-img" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/plot2-1.png" class="img-fluid figure-img" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </section>
 
-
-<div id="quarto-appendix" class="default"><section class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1" role="doc-endnote"><p>Saiba mais sobre as emissões de gases de efeito estufa no Brasil em &lt;https://seeg.eco.br&gt;.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section></div></main>
+</main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

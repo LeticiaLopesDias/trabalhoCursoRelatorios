@@ -10,3 +10,15 @@ p{
 a {
   color: #A09B55;
 }
+
+.sidebar nav[role=doc-toc] ul>li>a.active {
+    color: #A09B55 !important;
+}
+
+.nav-link {
+    color:#A09B55;
+}
+
+.sidebar nav[role=doc-toc] ul>li>a.active {
+    border-left: 1px solid #A09B55;
+}

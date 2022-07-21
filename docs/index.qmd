@@ -1,26 +1,106 @@
 ---
-title: "Desmatamento em Áreas Protegidas da Amazônia"
+title: "Desmatamento em Unidades de Conservação da Amazônia"
 author: "Letícia Lopes"
 date: "`r Sys.Date()`"
+execute:
+  echo: false
+  warning: false
+  message: false
 format:
   html:
+    toc: true
+    toc-title: Conteúdo
+    toc-location: left
     theme: journal
 css: custom.css
 ---
 
+```{r dados}
+
+library(dplyr)
+library(ggplot2)
+
+dados <- readxl::read_xlsx(here::here("data/dados_desmatamento.xlsx"))
+
+cores <- c("#003C20", # verde escuro principal
+            "#005A2D", # verde escuro secundário
+            "#9BBB59", # verde claro
+            "#C6C6C6", # cinza
+            "#A09B55", # marrom claro
+            "#F5E6D7") # bege
+
+```
+
+<em class='nota'> *A 1ª versão desse relatório foi feita como trabalho final do curso "R para Ciência de Dados 1", da* <a href="https://curso-r.com/" target="_blank">Curso-R</a>, em outubro de 2021 e está disponível para acesso <a href="https://leticialopesdias.github.io/relatorio-r4ds1/docs/" target="_blank">nesse link</a>. Essa versão consiste no trabalho final do curso "Relatórios Automáticos", também da Curso-R. </em>
+
+## Contexto
+
+As áreas protegidas possuem um papel amplamente reconhecido na conservação da biodiversidade. No bioma amazônico, são encontradas principalmente duas estratégias de proteção: as unidades de conservação e as terras indígenas. As primeiras serão o objeto dessa análise, cujo objetivo é avaliar o comportamento do desmatamento nessas áreas de `r min(dados$ano)` a `r max(dados$ano)`.
+
+Para isso, foram utilizados dados gerados pelo INPE - Instituto Nacional de Pesquisas Espaciais e disponibilizados no portal <a href="http://terrabrasilis.dpi.inpe.br/" target="_blank">TerraBrasilis</a>, junto aos dados do <a href= "http://dados.mma.gov.br/dataset/44b6dc8a-dc82-4a84-8d95-1b0da7c85dac/resource/fed217ff-fe75-4744-9663-0a06157d9c3b/download/cnuc_2022_01sem.csv" target="_blank">Cadastro Nacional de Unidades de Conservação</a>.
+
+## Resultados
+
 ```{r}
+
+soma2021 <- format(sum(dados$desmatamento_km2[dados$ano==2021]), 
+                   decimal.mark = ",", big.mark = ".")
+
+aumento2021 <- format((
+  sum(dados$desmatamento_km2[dados$ano == 2021]) /
+    sum(dados$desmatamento_km2[dados$ano == 2020]) - 1
+) * 100,
+digits = 1)
 
 
 ```
 
-<em class='nota'>
-*A 1ª versão desse relatório foi feita como trabalho final do curso "R para Ciência de Dados 1", da <a href="https://curso-r.com/" target="_blank">Curso-R</a>, em outubro de 2021 e está disponível para acesso <a href="https://leticialopesdias.github.io/relatorio/docs/" target="_blank">nesse link</a>. Essa versão consiste no trabalho final do curso "Relatórios Automáticos", também da Curso-R.*
-</em>
+Assim como ocorreu para o bioma como um todo, o desmatamento nas unidades de conservação (UCs) aumentou nos últimos anos, como visto na figura abaixo. Em 2021 foi registrado o maior valor dos últimos 13 anos: **`r soma2021` km²**, o que representa um aumento de **`r aumento2021`%** em relação ao ano anterior, que já havia sido um recorde histórico. 
 
-## Contexto
+Além disso, o estado do Pará segue como o principal foco do desmatamento, com suas unidades sendo as mais afetadas pela perda de floresta ao longo de todo o período de análise e sofrendo com o aumento acentuado nos últimos 4 anos.
 
-O desmatamento da floresta amazônica se destaca nas discussões sobre mudanças climáticas uma vez que é responsável por quase metade das emissões de gases de efeito estufa pelo Brasil ^[Saiba mais sobre as emissões de gases de efeito estufa no Brasil em \<https://seeg.eco.br>.].
+::: {.panel-tabset}
+### Todas as unidades
 
-As áreas protegidas formam uma barreira contra esse desmatamento, sendo que diversos projetos de conservação visam apoiar essas áreas no cumprimento de seus objetivos. O Projeto <a href="https://lira.ipe.org.br/" target="_blank">**LIRA - Legado Integrado da Região Amazônica**</a> se soma às iniciativas existentes e abrange 43 unidades de conservação e 43 terras indígenas da Amazônia brasileira.
+```{r plot1, fig.align='center', fig.width=6, fig.height=4}
 
-Para analisar o desmatamento na Amazônia e nas áreas apoiadas pelo LIRA, foram utilizados dados gerados pelo **INPE - Instituto Nacional de Pesquisas Espaciais** e disponibilizados no portal <a href="http://terrabrasilis.dpi.inpe.br/" target="_blank">TerraBrasilis</a>.
+dados %>% 
+  group_by(ano) %>% 
+  summarise(desm_anual = sum(desmatamento_km2, na.rm = TRUE)) %>% 
+  mutate(ano = as.factor(ano)) %>% 
+  ggplot() +
+  geom_col(aes(ano, desm_anual), fill = "#A09B55") +
+  labs(title = "Desmatamento em UCs da Amazônia",
+       y = "Desmatamento em km²",
+       x = element_blank()) +
+  scale_y_continuous(expand = expansion(mult = c(0,0.05)),
+                     n.breaks = 10) +
+  theme_classic()
+
+```
+
+### Por estado
+
+```{r plot2, fig.align='center', fig.width=6, fig.height=4}
+
+
+dados %>% 
+  group_by(ano, uf) %>% 
+  summarise(desm_anual = sum(desmatamento_km2, na.rm = TRUE)) %>% 
+  mutate(uf = reorder(uf, desc(desm_anual))) %>% 
+  ggplot(aes(ano, desm_anual, color = uf)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Desmatamento em UCs, por estado da Amazônia",
+       y = "Desmatamento em km²",
+       x = element_blank(),
+       color = "Estado") +
+  scale_y_continuous(expand = expansion(mult = c(0,0.05)),
+                     n.breaks = 10) +
+  scale_x_continuous(n.breaks = 13) +
+  scale_color_manual(values = c("darkorange", "goldenrod", "khaki3", "firebrick3"))+
+  theme_classic()
+
+```
+
+:::
