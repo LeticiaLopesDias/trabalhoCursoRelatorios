@@ -1,6 +1,8 @@
 ## Preparar dados de desmatamento em Unidades de Conservação
 
 library(dplyr)
+library(sf)
+library(geobr)
 
 # Baixar dados das Unidades de Conservação
 
@@ -23,7 +25,7 @@ cnuc_tratado <- cnuc %>%
 # Não consegui baixar pelo R os dados de desmatamento, mas estão disponíveis no link:
 # http://terrabrasilis.dpi.inpe.br/app/dashboard/deforestation/biomes/legal_amazon/increments
 
-prodes <- read.csv2("data-raw/terrabrasilis_legal_amazon_20_6_2022_1658328157652.csv",
+prodes <- read.csv2("data-raw/terrabrasilis_legal_amazon_21_6_2022_1658428458403.csv",
                     encoding = "UTF-8")
 glimpse(prodes)
 
@@ -35,20 +37,17 @@ sem_codigo <- prodes_cnuc %>%
   filter(is.na(codigo_uc))
 
 unique(sem_codigo$consunit)
-# "ÁREA DE PROTEçãO AMBIENTAL DA BAIXADA MARANHENSE"
-# "ÁREA DE PROTEçãO AMBIENTAL DE UPAON-AçU / MIRITIBA / ALTO PREGUIçAS"
-
-cnuc %>%
-  filter(UF == "MA") %>% View()
-# grafia:
-# ÁREA DE PROTEÇÃO AMBIENTAL DA BAIXADA MARANHENSE
-# ÁREA DE PROTEÇÃO AMBIENTAL DE UPAON-AÇU / MIRITIBA / ALTO PREGUIÇAS
-
 
 prodes <- prodes %>%
-  mutate(consunit = case_when(consunit == "ÁREA DE PROTEçãO AMBIENTAL DA BAIXADA MARANHENSE" ~ "ÁREA DE PROTEÇÃO AMBIENTAL DA BAIXADA MARANHENSE",
-                              consunit == "ÁREA DE PROTEçãO AMBIENTAL DE UPAON-AçU / MIRITIBA / ALTO PREGUIçAS" ~ "ÁREA DE PROTEÇÃO AMBIENTAL DE UPAON-AÇU / MIRITIBA / ALTO PREGUIÇAS",
-                              TRUE ~ consunit))
+  mutate(consunit = case_when(consunit == "RESERVA EXTRATIVISTA  DO RIO CAUTÁRIO" ~ "RESERVA EXTRATIVISTA DO RIO CAUTÁRIO",
+                              consunit == "ÁREA DE PROTEÇÃO AMBIENTAL  TAPURUQUARA" ~ "ÁREA DE PROTEÇÃO AMBIENTAL TAPURUQUARA",
+                              TRUE ~ consunit)) %>%
+  mutate(consunit = stringr::str_replace_all(consunit, c("ç" = "Ç", "ã" = "Ã",
+                                                         "á" = "Á", "é" = "É",
+                                                         "ú" = "Ú", "ó" = "Ó",
+                                                         "ô" = "Ô", "í" = "Í",
+                                                         "â" = "Â"
+                                                         )))
 
 # Juntar novamente
 prodes_cnuc <- left_join(prodes, cnuc_tratado, by = c("consunit" = "nome_da_uc")) %>%
@@ -65,3 +64,34 @@ prodes_cnuc %>%
 glimpse(prodes_cnuc)
 
 writexl::write_xlsx(prodes_cnuc, "data/dados_desmatamento.xlsx")
+
+
+# Preparar arquivo shapefile
+
+amazonia <- geobr::read_amazon()
+ucs <- geobr::read_conservation_units()
+
+ucs <- sf::st_make_valid(ucs)
+
+ucs_amazonia <- sf::st_intersection(ucs, amazonia)
+
+desmatamento_total <- prodes_cnuc %>%
+  group_by(codigo_uc) %>%
+  summarise(soma_desm = sum(desmatamento_km2, na.rm = TRUE))
+
+dados_mapa <- left_join(ucs_amazonia, desmatamento_total,
+                        by = c("code_u111" = "codigo_uc")) %>%
+  select(code_u111, soma_desm)
+
+dados_mapa <- st_make_valid(dados_mapa)
+
+sf::st_write(dados_mapa, "data/shape_desmatamento.shp")
+
+# Shape com os estados da Amazôni
+
+brasil <- geobr::read_state()
+
+# Cortar estados da amazônia
+estados_amazonia <- sf::st_intersection(brasil, amazonia)
+
+sf::st_write(estados_amazonia, "data/shape_estados.shp")

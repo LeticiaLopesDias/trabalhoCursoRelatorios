@@ -19,6 +19,7 @@ css: custom.css
 
 library(dplyr)
 library(ggplot2)
+library(sf)
 
 dados <- readxl::read_xlsx(here::here("data/dados_desmatamento.xlsx"))
 
@@ -57,12 +58,8 @@ digits = 1)
 
 Assim como ocorreu para o bioma como um todo, o desmatamento nas unidades de conservação (UCs) aumentou nos últimos anos, como visto na figura abaixo. Em 2021 foi registrado o maior valor dos últimos 13 anos: **`r soma2021` km²**, o que representa um aumento de **`r aumento2021`%** em relação ao ano anterior, que já havia sido um recorde histórico. 
 
-Além disso, o estado do Pará segue como o principal foco do desmatamento, com suas unidades sendo as mais afetadas pela perda de floresta ao longo de todo o período de análise e sofrendo com o aumento acentuado nos últimos 4 anos.
 
-::: {.panel-tabset}
-### Todas as unidades
-
-```{r plot1, fig.align='center', fig.width=6, fig.height=4}
+```{r plot1, fig.align='center', fig.width=8, fig.height=4}
 
 dados %>% 
   group_by(ano) %>% 
@@ -79,28 +76,194 @@ dados %>%
 
 ```
 
+::: {.panel-tabset}
+
 ### Por estado
 
-```{r plot2, fig.align='center', fig.width=6, fig.height=4}
+As UCs do estado do Pará apresentaram a maior média de desmatamento nos últimos 4 anos, chegando a 132 km² por unidade de conservação no ano de 2021. O Pará também é campeão em perda de floresta fora de áreas protegidas, segundo dados do INPE. Outro estado que apresentou um aumento significativo foi o Acre, que quase quadruplicou seu desmatamento médio de 2018 para 2019, chegando a 88 km²/unidade no ano de 2021.
 
+```{r plot2, fig.height=4}
 
-dados %>% 
+# Considerar apenas primeiro estado que aparece na coluna
+#unique(dados_uf$uf)
+dados_uf <- dados %>% 
+  mutate(uf = case_when(uf == "AM, RR" ~ "AM",
+                        uf == "AM, RO" ~ "AM",
+                        uf == "AM, MT" ~ "AM",
+                        uf == "AM, PA" ~ "AM",
+                        uf == "AM, RO, MT" ~ "AM",
+                        uf == "AP, PA" ~ "AP",
+                        uf == "GO, MT, TO" ~ "GO",
+                        TRUE ~ uf)) %>% 
   group_by(ano, uf) %>% 
-  summarise(desm_anual = sum(desmatamento_km2, na.rm = TRUE)) %>% 
-  mutate(uf = reorder(uf, desc(desm_anual))) %>% 
-  ggplot(aes(ano, desm_anual, color = uf)) +
+  summarise(desm_medio = mean(desmatamento_km2, na.rm = TRUE)) %>% 
+  tidyr::pivot_wider(names_from = ano, values_from = desm_medio) %>% 
+  slice_max(`2021`, n = 5) %>%
+  tidyr::pivot_longer(cols = 2:15, names_to = "ano", values_to = "desm_medio")
+
+dados_uf %>%  
+  mutate(ano = as.double(ano)) %>%  
+  ggplot(aes(ano, desm_medio, color = uf)) +
   geom_line() +
   geom_point() +
-  labs(title = "Desmatamento em UCs, por estado da Amazônia",
-       y = "Desmatamento em km²",
+  labs(title = "Média de desmatamento em UCs nos estados mais \ndesmatados em 2021",
+       y = "Média de desmatamento \n(km²/nº de unidades)",
        x = element_blank(),
        color = "Estado") +
   scale_y_continuous(expand = expansion(mult = c(0,0.05)),
                      n.breaks = 10) +
   scale_x_continuous(n.breaks = 13) +
-  scale_color_manual(values = c("darkorange", "goldenrod", "khaki3", "firebrick3"))+
+  scale_color_manual(values = c("darkorange", "goldenrod", 
+                                "khaki3", "firebrick3", "#C6C6C6")) +
   theme_classic()
 
 ```
 
+### Por esfera de gestão
+
+As UCs estaduais são, em média, as mais afetadas pelo desmatamento. Em 2021, elas apresentaram quase o dobro do desmatamento registrado nas unidades federais, o que pode ser um reflexo da menor capacidade de proteção e fiscalização dos órgãos estaduais. Ainda assim, ambas as esferas de gestão seguiram o padrão de aumento no desmatamento a partir de 2018.
+
+```{r plot3, fig.height=4}
+
+dados %>% 
+  group_by(ano, esfera_administrativa) %>% 
+  summarise(desm_medio = mean(desmatamento_km2, na.rm = TRUE)) %>%
+  mutate(esfera_administrativa = reorder(esfera_administrativa, desc(desm_medio))) %>% 
+  ggplot(aes(ano, desm_medio, color = esfera_administrativa)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Média de desmatamento em UCs da Amazônia, \npor esfera de gestão",
+       y = "Média de desmatamento \n(km²/nº de unidades)",
+       x = element_blank(),
+       color = element_blank()) +
+  scale_y_continuous(expand = expansion(mult = c(0,0.05)),
+                     n.breaks = 10) +
+  scale_x_continuous(n.breaks = 13) +
+  scale_color_manual(values = c("darkorange", "goldenrod", "firebrick3"))+
+  theme_classic()
+
+```
+
+### Por categoria de manejo
+
+As UCs da categoria Área de Proteção Ambiental (APA) foram as mais desmatadas, em média, no período crítico dos últimos 4 anos, seguidas pelas Florestas e Reservas Extrativistas. As três categorias representam unidades de uso sustentável, isto é, nas quais é permitido uso indireto de recursos com o objetivo de compatibilizar a conservação da natureza com o desenvolvimento sustentável. As APAs, especificamente, apresentam maior flexibilidade nos usos permitidos, além de geralmente abrangerem espaços territoriais maiores e mais diversos, que podem incluir também contextos socioeconômicos muito distintos. Essas características tornam sua gestão particularmente desafiadora e pode estar associada à maior dificuldade de proteção. Em relação às demais categorias de uso sustentável, o aumento pode estar associado ao incentivo à invasão de territórios de comunidades tradicionais que permeia o discurso político dos últimos anos, porém uma análise mais profunda seria necessária para enriquecer a discussão. 
+
+
+```{r plot4, fig.height=4}
+#unique(dados$categoria_de_manejo)
+
+dados_categoria <- dados %>% 
+  group_by(ano, categoria_de_manejo) %>% 
+  summarise(desm_medio = mean(desmatamento_km2, na.rm = TRUE)) %>% 
+  tidyr::pivot_wider(names_from = ano, values_from = desm_medio) %>% 
+  slice_max(`2021`, n = 5) %>%
+  tidyr::pivot_longer(cols = 2:15, names_to = "ano", values_to = "desm_medio")
+
+
+dados_categoria %>% 
+  mutate(ano = as.double(ano)) %>%
+  ggplot(aes(ano, desm_medio, color = categoria_de_manejo)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Média de desmatamento em UCs da Amazônia nas categorias de \nmanejo mais desmatadas",
+       y = "Média de desmatamento \n(km²/nº de unidades)",
+       x = element_blank(),
+       color = element_blank()) +
+  scale_y_continuous(expand = expansion(mult = c(0,0.05)),
+                     n.breaks = 10) +
+  scale_x_continuous(n.breaks = 13) +
+  scale_color_manual(values = c("darkorange", "goldenrod", 
+                                "khaki3", "firebrick3", "#C6C6C6")) +
+  theme_classic() +
+  theme(legend.position = "top")
+
+```
+
 :::
+
+De forma individualizada, o desmatamento varia muito entre as UCs, com destaque para o fato de que apenas
+
+```{r dados-mapa, message=FALSE, warning=FALSE}
+dados_mapa <- st_read(here::here("data/shape_desmatamento.shp"))
+
+estados_amazonia <- st_read(here::here("data/shape_estados.shp"))
+
+nome_estados <- estados_amazonia %>% 
+  mutate(ID = stringr::str_to_title(nam_stt),
+         centroid = sf::st_centroid(geometry))
+
+nome_estados_coords <- nome_estados %>% 
+  st_centroid() %>% 
+  st_coordinates() %>%
+  as_tibble()
+
+nome_estados2 <- nome_estados %>%  
+  bind_cols(nome_estados_coords) %>% 
+  select(ID, X, Y, centroid, geometry) %>% 
+  filter(ID != "Goiás" & 
+           ID != "Bahia" &
+           ID != "Mato Grosso Do Sul" &
+           ID != "Piauí") %>% 
+  mutate(x_nudge = case_when(ID == 'Roraima' ~ -.5
+                             ,ID == 'Acre' ~ -1.2
+                             ,ID == 'Pará' ~ 1.5
+                             ,ID == 'Amazonas' ~ -.7
+                             ,ID == 'Rondônia' ~ .7
+                             ,TRUE ~ 0
+  ),
+  y_nudge = case_when( ID == 'Rondônia' ~ -1.5
+                       ,ID == 'Roraima' ~ 1
+                       ,ID == 'Mato Grosso' ~ -1
+                       ,ID == 'Pará' ~ 1
+                       ,ID == 'Acre' ~ 1
+                       ,ID == 'Tocantins' ~ -1
+                       ,TRUE ~ 0
+  ))
+
+```
+
+
+
+```{r mapa, fig.align = "center",  fig.height=5, fig.width=7}
+
+ggplot() +
+  geom_sf(data = estados_amazonia, fill = "NA") +
+  geom_text(data = nome_estados2
+            ,aes(x = X, y = Y, label = ID)
+            ,color = "#333333"
+            ,size = 4
+            ,nudge_x = nome_estados2$x_nudge
+            ,nudge_y = nome_estados2$y_nudge
+  ) +
+  geom_sf(data = dados_mapa, aes(fill = soma_desm), color = "#333333") +
+  #scale_fill_distiller(palette = "RdYlGn") +
+  scale_fill_gradient2(low = "chartreuse4", midpoint = 50, 
+                       mid = "gold", high = "firebrick3",
+                       na.value = "gray75") +
+  labs(x = element_blank(),
+       y = element_blank(),
+       fill = "Desmatamento acumulado de 2008 a 2021 (km²)") +
+  ggspatial::annotation_scale(location = 'bl') +
+  ggspatial::annotation_north_arrow(location = "bl", which_north = "true", 
+                                    pad_x = unit(1, "cm"), 
+                                    pad_y = unit(1, "cm"),
+                                    height = unit(1, "cm"),
+                                    width = unit(1, "cm")
+  ) +
+  theme_void() +
+  theme(legend.position = c(0.9,0.2),
+        legend.justification = c(0.5, 0.5),
+        legend.background = element_rect(fill = "white"),
+        legend.margin = margin(10,10,10,10))
+
+```
+
+
+
+
+
+
+## Considerações Finais
+
+Entendendo o contexto de ameaça e o nível de impacto que atinge as áreas protegidas, é possível estabelecer ações prioritárias de monitoramento e proteção, garantindo que o apoio fornecido atenda às necessidades mais urgentes daquela área. Vale dizer ainda que o desmatamento é um dentre outros fatores que ameaçam a conservação do bioma amazônico, logo é essencial uma análise integrada para melhor tomada de decisão.
+
