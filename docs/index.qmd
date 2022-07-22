@@ -38,7 +38,7 @@ cores <- c("#003C20", # verde escuro principal
 
 As áreas protegidas possuem um papel amplamente reconhecido na conservação da biodiversidade. No bioma amazônico, são encontradas principalmente duas estratégias de proteção: as unidades de conservação e as terras indígenas. As primeiras serão o objeto dessa análise, cujo objetivo é avaliar o comportamento do desmatamento nessas áreas de `r min(dados$ano)` a `r max(dados$ano)`.
 
-Para isso, foram utilizados dados gerados pelo INPE - Instituto Nacional de Pesquisas Espaciais e disponibilizados no portal <a href="http://terrabrasilis.dpi.inpe.br/" target="_blank">TerraBrasilis</a>, junto aos dados do <a href= "http://dados.mma.gov.br/dataset/44b6dc8a-dc82-4a84-8d95-1b0da7c85dac/resource/fed217ff-fe75-4744-9663-0a06157d9c3b/download/cnuc_2022_01sem.csv" target="_blank">Cadastro Nacional de Unidades de Conservação</a>.
+Para isso, foram utilizados dados gerados pelo INPE - Instituto Nacional de Pesquisas Espaciais e disponibilizados no portal <a href="http://terrabrasilis.dpi.inpe.br/" target="_blank">TerraBrasilis</a>, junto aos dados do <a href= "http://dados.mma.gov.br/dataset/44b6dc8a-dc82-4a84-8d95-1b0da7c85dac/resource/fed217ff-fe75-4744-9663-0a06157d9c3b/download/cnuc_2022_01sem.csv" target="_blank">Cadastro Nacional de Unidades de Conservação</a>. Para a discussão dos resultados, também foi utilizado como referência o último <a href="https://mapbiomas.org/desmatamento-em-2021-aumentou-20-com-crescimento-em-todos-os-biomas-1" target="_blank">Relatório Anual de Desmatamento no Brasil</a>, do projeto MapBiomas.
 
 ## Resultados
 
@@ -56,8 +56,7 @@ digits = 1)
 
 ```
 
-Assim como ocorreu para o bioma como um todo, o desmatamento nas unidades de conservação (UCs) aumentou nos últimos anos, como visto na figura abaixo. Em 2021 foi registrado o maior valor dos últimos 13 anos: **`r soma2021` km²**, o que representa um aumento de **`r aumento2021`%** em relação ao ano anterior, que já havia sido um recorde histórico. 
-
+Assim como ocorreu para o bioma como um todo, o desmatamento nas unidades de conservação (UCs) aumentou nos últimos anos, como visto na figura abaixo. Em 2021 foi registrado o maior valor dos últimos 13 anos: **`r soma2021` km²**, o que representa um aumento de **`r aumento2021`%** em relação ao ano anterior, que já havia sido um recorde histórico.
 
 ```{r plot1, fig.align='center', fig.width=8, fig.height=4}
 
@@ -76,11 +75,10 @@ dados %>%
 
 ```
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ### Por estado
 
-As UCs do estado do Pará apresentaram a maior média de desmatamento nos últimos 4 anos, chegando a 132 km² por unidade de conservação no ano de 2021. O Pará também é campeão em perda de floresta fora de áreas protegidas, segundo dados do INPE. Outro estado que apresentou um aumento significativo foi o Acre, que quase quadruplicou seu desmatamento médio de 2018 para 2019, chegando a 88 km²/unidade no ano de 2021.
+As UCs do estado do Pará apresentaram a maior média de desmatamento nos últimos 4 anos, chegando a 19 km² por unidade de conservação no ano de 2021. O Pará também é campeão em perda de floresta fora de áreas protegidas e o Relatório do MapBiomas aponta que nesse estado o garimpo é um dos principais vetores de ameaça. Outro estado que apresentou um aumento significativo foi o Acre, que triplicou seu desmatamento médio de 2018 para 2019, chegando a mais de 10 km²/unidade em 2020.
 
 ```{r plot2, fig.height=4}
 
@@ -121,7 +119,7 @@ dados_uf %>%
 
 ### Por esfera de gestão
 
-As UCs estaduais são, em média, as mais afetadas pelo desmatamento. Em 2021, elas apresentaram quase o dobro do desmatamento registrado nas unidades federais, o que pode ser um reflexo da menor capacidade de proteção e fiscalização dos órgãos estaduais. Ainda assim, ambas as esferas de gestão seguiram o padrão de aumento no desmatamento a partir de 2018.
+As UCs estaduais são, em média, as mais afetadas pelo desmatamento, o que pode ser um reflexo da menor capacidade de proteção e fiscalização dos órgãos estaduais. Porém, enquanto sua média parece se estabilizar, o desmatamento nas unidades federais cresceu vertiginosamente nos últimos anos, um alerta para o aumento da vulnerabilidade dessas áreas.
 
 ```{r plot3, fig.height=4}
 
@@ -146,8 +144,7 @@ dados %>%
 
 ### Por categoria de manejo
 
-As UCs da categoria Área de Proteção Ambiental (APA) foram as mais desmatadas, em média, no período crítico dos últimos 4 anos, seguidas pelas Florestas e Reservas Extrativistas. As três categorias representam unidades de uso sustentável, isto é, nas quais é permitido uso indireto de recursos com o objetivo de compatibilizar a conservação da natureza com o desenvolvimento sustentável. As APAs, especificamente, apresentam maior flexibilidade nos usos permitidos, além de geralmente abrangerem espaços territoriais maiores e mais diversos, que podem incluir também contextos socioeconômicos muito distintos. Essas características tornam sua gestão particularmente desafiadora e pode estar associada à maior dificuldade de proteção. Em relação às demais categorias de uso sustentável, o aumento pode estar associado ao incentivo à invasão de territórios de comunidades tradicionais que permeia o discurso político dos últimos anos, porém uma análise mais profunda seria necessária para enriquecer a discussão. 
-
+As UCs da categoria Área de Proteção Ambiental (APA) são as mais desmatadas, em média, ao longo de todo o período de análise. O MapBiomas também aponta um maior desmatamento em unidades de uso sustentável em 2021, porém chama a atenção para o aumento da amaeça sobre as unidades de proteção integral. UCs de uso sustentável são aquelas nas quais é permitido uso indireto de recursos com o objetivo de compatibilizar a conservação da natureza com o desenvolvimento sustentável. As APAs, especificamente, apresentam maior flexibilidade nos usos permitidos, além de geralmente abrangerem espaços territoriais maiores e mais diversos. Essas características tornam sua gestão particularmente desafiadora e pode estar associada à maior dificuldade de proteção. Em relação às demais categorias de uso sustentável, o aumento pode estar associado ao incentivo à invasão de territórios de comunidades tradicionais que permeia o discurso político dos últimos anos, porém uma análise mais profunda seria necessária para enriquecer a discussão.
 
 ```{r plot4, fig.height=4}
 #unique(dados$categoria_de_manejo)
@@ -178,12 +175,17 @@ dados_categoria %>%
   theme(legend.position = "top")
 
 ```
-
 :::
 
-De forma individualizada, o desmatamento varia muito entre as UCs, com destaque para o fato de que apenas
+De forma individualizada, o desmatamento varia muito entre as UCs, com apenas três áreas apresentando um desmatamento acumulado maior do que 1000 km² entre 2008 e 2021:
 
-```{r dados-mapa, message=FALSE, warning=FALSE}
+1.  Reserva Extrativista Jaci-Paraná, com 1000,29 km²
+2.  Floresta Nacional do Jamanxim, com 1024,61 km²
+3.  Área de Proteção Ambiental Triunfo do Xingu, com 3513,95 km²
+
+O desmatamento nas outras UCs se distribui segundo o mapa abaixo, sendo possível acessar também a tabela de dados para consultar unidades individualmente.
+
+```{r dados-mapa, include=FALSE}
 dados_mapa <- st_read(here::here("data/shape_desmatamento.shp"))
 
 estados_amazonia <- st_read(here::here("data/shape_estados.shp"))
@@ -222,9 +224,18 @@ nome_estados2 <- nome_estados %>%
 
 ```
 
-
+::: panel-tabset
+### Mapa
 
 ```{r mapa, fig.align = "center",  fig.height=5, fig.width=7}
+
+dados_mapa <- dados_mapa %>% rename(soma_desm = som_dsm)
+
+dados_mapa2 <- dados_mapa %>% 
+  filter(soma_desm < 1000 | is.na(soma_desm))
+
+dados_mapa3 <- dados_mapa %>% 
+  filter(soma_desm >= 1000)
 
 ggplot() +
   geom_sf(data = estados_amazonia, fill = "NA") +
@@ -235,14 +246,16 @@ ggplot() +
             ,nudge_x = nome_estados2$x_nudge
             ,nudge_y = nome_estados2$y_nudge
   ) +
-  geom_sf(data = dados_mapa, aes(fill = soma_desm), color = "#333333") +
-  #scale_fill_distiller(palette = "RdYlGn") +
-  scale_fill_gradient2(low = "chartreuse4", midpoint = 50, 
+  geom_sf(data = dados_mapa2, aes(fill = soma_desm), color = "#333333") +
+  geom_sf(data = dados_mapa3, fill = "cyan4", color = "#333333") +
+  scale_fill_gradient2(low = "chartreuse4", midpoint = 100, 
                        mid = "gold", high = "firebrick3",
                        na.value = "gray75") +
   labs(x = element_blank(),
        y = element_blank(),
-       fill = "Desmatamento acumulado de 2008 a 2021 (km²)") +
+       title = "Desmatamento acumulado de 2008 a 2021",
+       fill = "km² desmatados",
+       caption = "Em azul, áreas com mais de 1000 km² de desmatamento.\nEm cinza, áreas sem desmatamento detectado no período") +
   ggspatial::annotation_scale(location = 'bl') +
   ggspatial::annotation_north_arrow(location = "bl", which_north = "true", 
                                     pad_x = unit(1, "cm"), 
@@ -251,19 +264,35 @@ ggplot() +
                                     width = unit(1, "cm")
   ) +
   theme_void() +
-  theme(legend.position = c(0.9,0.2),
+  theme(legend.position = c(0.95,0.2),
         legend.justification = c(0.5, 0.5),
         legend.background = element_rect(fill = "white"),
         legend.margin = margin(10,10,10,10))
 
 ```
 
+### Tabela de dados
 
+```{r}
+tabela <- as_tibble(dados_mapa) %>% 
+  relocate(soma_desm, .after = nm_cns_) %>% 
+  mutate(nm_cns_ = stringr::str_to_title(nm_cns_)) %>% 
+  filter(!is.na(soma_desm)) %>% 
+  arrange(desc(soma_desm)) %>% 
+  rename(`Código CNUC` = cod_111,
+         `Desmatamento acumulado(km²)` = soma_desm,
+         `Unidade de Conservação` = nm_cns_
+         ) %>% 
+  select(-geometry) 
 
-
-
+DT::datatable(tabela)
+```
+:::
 
 ## Considerações Finais
 
-Entendendo o contexto de ameaça e o nível de impacto que atinge as áreas protegidas, é possível estabelecer ações prioritárias de monitoramento e proteção, garantindo que o apoio fornecido atenda às necessidades mais urgentes daquela área. Vale dizer ainda que o desmatamento é um dentre outros fatores que ameaçam a conservação do bioma amazônico, logo é essencial uma análise integrada para melhor tomada de decisão.
+Apenas 10% de todo o desmatamento da Amazônia em 2021 ocorreu no interior das unidades de conservação, segundo o Relatório do MapBiomas, o que indica que essas áreas são menos ameaçadas em relação ao bioma como um todo. Contudo, ao desenhar estratégias de conservação voltadas para as UCs, é essencial conhecer o nível de impacto do desmatamento, sobretudo se a área está entre as mais afetadas. Isso permite estabelecer ações prioritárias de monitoramento e proteção, garantindo que o apoio fornecido atenda às necessidades mais urgentes daquela área.
 
+Por outro lado, essa é uma análise para fins didáticos, pois uma avaliação mais assertiva requer o tratamento de dados geoespaciais primários. Aqui foram utilizadas planilhas geradas pelo TerraBrasillis, a plataforma do INPE, em que o cruzamento mais acurados com informações como os limites dos estados ou áreas de sobreposição entre áreas protegidas não é possível. Ainda assim, o panorama é consistente com outras análises de desmatamento o que indica que, para uma visão mais geral, as interpretações podem ser úteis.
+
+<em class='nota'> Caso deseje mais informações sobre a análise, entre em contato via e-mail: [leticia.lopes.dias\@alumni.usp.br]{.ul} </em>

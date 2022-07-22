@@ -81,7 +81,7 @@ desmatamento_total <- prodes_cnuc %>%
 
 dados_mapa <- left_join(ucs_amazonia, desmatamento_total,
                         by = c("code_u111" = "codigo_uc")) %>%
-  select(code_u111, soma_desm)
+  select(code_u111, soma_desm, name_conservation_unit)
 
 dados_mapa <- st_make_valid(dados_mapa)
 
